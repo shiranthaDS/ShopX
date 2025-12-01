@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../lib/api.js';
+import { useAuth } from '../context/AuthContext.jsx';
 import Input from '../components/Input.jsx';
 import PasswordInput from '../components/PasswordInput.jsx';
 import Button from '../components/Button.jsx';
 
 export default function Register() {
   const navigate = useNavigate();
+  const { register: registerFn } = useAuth();
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -16,7 +18,7 @@ export default function Register() {
     setError('');
     setLoading(true);
     try {
-      await api.register(form);
+      await registerFn(form.name, form.email, form.password);
       navigate('/');
     } catch (err) {
       setError(err.message);
