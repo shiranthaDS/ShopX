@@ -1,0 +1,34 @@
+import express from 'express';
+import helmet from 'helmet';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import morgan from 'morgan';
+import authRoutes from './routes/auth.routes.js';
+
+const app = express();
+
+const clientOrigin = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
+
+app.use(helmet());
+app.use(morgan('dev'));
+app.use(express.json());
+app.use(cookieParser());
+app.use(
+  cors({
+    origin: clientOrigin,
+    credentials: true,
+  })
+);
+
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', service: 'auth' });
+});
+
+app.use('/api/auth', authRoutes);
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ message: 'Not Found' });
+});
+
+export default app;
