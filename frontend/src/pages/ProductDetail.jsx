@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { productsApi } from '../lib/productsApi.js';
 import { formatMoney } from '../lib/money.js';
+import { useCart } from '../context/CartContext.jsx';
+import { flyToCart } from '../lib/anim.js';
 
 const PRODUCT_API_BASE = import.meta.env.VITE_PRODUCT_API_BASE || 'http://localhost:4002';
 const resolveImageUrl = (raw) => {
@@ -22,6 +24,8 @@ export default function ProductDetail() {
   const [error, setError] = useState('');
   const [idx, setIdx] = useState(0);
   const [qty, setQty] = useState(1);
+  const { add: addToCart } = useCart();
+  const mainImgRef = useRef(null);
 
   useEffect(() => {
     let mounted = true;
@@ -64,6 +68,16 @@ export default function ProductDetail() {
 
   const dec = () => setQty((q) => Math.max(1, q - 1));
   const inc = () => setQty((q) => Math.min(99, q + 1));
+  const bumpCartBadge = () => {
+    const badge = document.getElementById('cart-badge');
+    if (!badge) return;
+    badge.classList.remove('cart-badge-bump');
+    void badge.offsetWidth;
+    badge.classList.add('cart-badge-bump');
+    const cleanup = () => badge.classList.remove('cart-badge-bump');
+    badge.addEventListener('animationend', cleanup, { once: true });
+    setTimeout(cleanup, 700);
+  };
 
   return (
     <div className="mx-auto max-w-5xl">
@@ -80,6 +94,7 @@ export default function ProductDetail() {
           <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-900 max-h-[420px]">
           {images.length ? (
             <img
+              ref={mainImgRef}
               key={idx}
               src={resolveImageUrl(images[idx])}
               alt={`${product.title} image ${idx + 1}`}
@@ -192,8 +207,29 @@ export default function ProductDetail() {
                 />
                 <button onClick={inc} className="px-2 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-800" aria-label="Increase quantity">+</button>
               </div>
-              <button disabled={product.stock <= 0} className="flex-1 rounded-md px-4 py-2 text-sm bg-gray-900 text-white hover:bg-black disabled:opacity-50">Add to Cart</button>
-              <button disabled={product.stock <= 0} className="rounded-md px-4 py-2 text-sm bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50">Buy Now</button>
+              <button
+                disabled={product.stock <= 0}
+                onClick={async () => {
+                  try {
+                    flyToCart(mainImgRef.current);
+                    bumpCartBadge();
+                    await addToCart({ productId: product._id, title: product.title, price: product.price, image: images[0], qty });
+                  } catch (e) { alert(e.message); }
+                }}
+                className="flex-1 rounded-md px-4 py-2 text-sm bg-gray-900 text-white hover:bg-black disabled:opacity-50"
+              >Add to Cart</button>
+              <button
+                disabled={product.stock <= 0}
+                onClick={async () => {
+                  try {
+                    flyToCart(mainImgRef.current);
+                    bumpCartBadge();
+                    await addToCart({ productId: product._id, title: product.title, price: product.price, image: images[0], qty });
+                    navigate('/cart');
+                  } catch (e) { alert(e.message); }
+                }}
+                className="rounded-md px-4 py-2 text-sm bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50"
+              >Buy Now</button>
             </div>
 
             {/* Trust indicators */}

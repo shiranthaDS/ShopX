@@ -8,9 +8,12 @@ const resolveImageUrl = (url) => {
 };
 
 import { Link } from 'react-router-dom';
+import { useCart } from '../context/CartContext.jsx';
+import { flyToCart } from '../lib/anim.js';
 import { formatMoney } from '../lib/money.js';
 
 export default function ProductCard({ product }) {
+  const { add } = useCart();
   return (
     <div className="group rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 flex flex-col shadow-sm hover:shadow-md transition">
       <Link to={`/products/${product._id}`} className="block">
@@ -50,7 +53,24 @@ export default function ProductCard({ product }) {
       </div>
       <div className="mt-3 grid grid-cols-2 gap-2">
         <Link to={`/products/${product._id}`} className="text-center text-xs rounded-md px-3 py-2 bg-indigo-600 text-white hover:bg-indigo-700">Buy Now</Link>
-        <Link to={`/products/${product._id}`} className="text-center text-xs rounded-md px-3 py-2 bg-gray-900 text-white hover:bg-black dark:bg-gray-700 dark:hover:bg-gray-600">Add to Cart</Link>
+        <button
+          onClick={async (e) => {
+            // Try to use the image as source for animation
+            const img = e.currentTarget.closest('.group')?.querySelector('img');
+            flyToCart(img);
+            const badge = document.getElementById('cart-badge');
+            if (badge) {
+              badge.classList.remove('cart-badge-bump');
+              void badge.offsetWidth;
+              badge.classList.add('cart-badge-bump');
+              const cleanup = () => badge.classList.remove('cart-badge-bump');
+              badge.addEventListener('animationend', cleanup, { once: true });
+              setTimeout(cleanup, 700);
+            }
+            try { await add({ productId: product._id, title: product.title, price: product.price, image: product.images?.[0], qty: 1 }); } catch (err) { /* ignore */ }
+          }}
+          className="text-center text-xs rounded-md px-3 py-2 bg-gray-900 text-white hover:bg-black dark:bg-gray-700 dark:hover:bg-gray-600"
+        >Add to Cart</button>
       </div>
     </div>
   );

@@ -9,3 +9,21 @@
 .glass {
   @apply bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl shadow-xl border border-white/40 dark:border-gray-800/60;
 }
+
+@keyframes cart-bump {
+  0% { transform: scale(1); }
+  10% { transform: scale(1.2); }
+  30% { transform: scale(0.9); }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+.cart-badge-bump { animation: cart-bump 300ms ease; }
+
+/* Fly-to-cart helper element styling */
+.fly-clone {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  will-change: transform, opacity;
+  box-shadow: 0 8px 24px rgba(0,0,0,.2);
+}

@@ -10,7 +10,11 @@ import { uploadsPath } from './middleware/upload.js';
 const app = express();
 const clientOrigin = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
 
-app.use(helmet());
+// Allow images to be embedded cross-origin from the frontend
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+  crossOriginEmbedderPolicy: false,
+}));
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(cookieParser());
