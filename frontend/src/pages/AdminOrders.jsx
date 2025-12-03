@@ -99,10 +99,6 @@ export default function AdminOrders() {
                   )}
                 </td>
                 <td className="px-3 py-2">
-                  {(o.cartTotalLocal || 0).toFixed(2)} {o.localCurrency}
-                </td>
-                <td className="px-3 py-2 text-[11px] text-gray-500">{new Date(o.createdAt).toLocaleString()}</td>
-                <td className="px-3 py-2">
                   <select
                     className="text-xs bg-transparent border border-gray-300 dark:border-gray-700 rounded px-2 py-1"
                     value={o.deliveryStatus || 'awaiting_shipment'}
@@ -131,6 +127,10 @@ export default function AdminOrders() {
                     {savingId === o._id ? 'Saving…' : 'Save'}
                   </button>
                 </td>
+                <td className="px-3 py-2">
+                  {(o.cartTotalLocal || 0).toFixed(2)} {o.localCurrency}
+                </td>
+                <td className="px-3 py-2 text-[11px] text-gray-500">{new Date(o.createdAt).toLocaleString()}</td>
               </tr>
             ))}
           </tbody>
