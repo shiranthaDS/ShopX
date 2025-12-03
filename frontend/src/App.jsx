@@ -8,6 +8,8 @@ import Checkout from './pages/Checkout.jsx';
 import Payment from './pages/Payment.jsx';
 import OrderSuccess from './pages/OrderSuccess.jsx';
 import AdminProducts from './pages/AdminProducts.jsx';
+import AdminOrders from './pages/AdminOrders.jsx';
+import AdminInventory from './pages/AdminInventory.jsx';
 import { useAuth } from './context/AuthContext.jsx';
 import { useCart } from './context/CartContext.jsx';
 
@@ -24,7 +26,13 @@ export default function App() {
         </Link>
         <nav className="flex gap-4 text-sm items-center">
           <Link to="/products" className="hover:underline">Products</Link>
-          {isAdmin && <Link to="/admin/products" className="hover:underline">Admin</Link>}
+          {isAdmin && (
+            <>
+              <Link to="/admin/products" className="hover:underline">Admin</Link>
+              <Link to="/admin/orders" className="hover:underline">Orders</Link>
+              <Link to="/admin/inventory" className="hover:underline">Inventory</Link>
+            </>
+          )}
           <Link to="/cart" className="relative inline-flex items-center" aria-label="Cart">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6">
               <path d="M2.25 2.25a.75.75 0 000 1.5h1.386c.51 0 .955.343 1.09.835l2.591 9.709a2.25 2.25 0 002.175 1.676h7.284a2.25 2.25 0 002.175-1.676l1.74-6.524a.75.75 0 10-1.45-.387l-1.74 6.524a.75.75 0 01-.725.559H9.492a.75.75 0 01-.725-.559L6.176 4.91A2.25 2.25 0 004.636 3.75H2.25z" />
@@ -61,6 +69,8 @@ export default function App() {
           <Route path="/payment" element={<Payment />} />
           <Route path="/order-success" element={<OrderSuccess />} />
           <Route path="/admin/products" element={isAdmin ? <AdminProducts /> : <Navigate to="/login" replace />} />
+          <Route path="/admin/orders" element={isAdmin ? <AdminOrders /> : <Navigate to="/login" replace />} />
+          <Route path="/admin/inventory" element={isAdmin ? <AdminInventory /> : <Navigate to="/login" replace />} />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </main>

@@ -93,7 +93,7 @@ export default function Payment() {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               credentials: 'include',
-              body: JSON.stringify({ orderID: data.orderID })
+              body: JSON.stringify({ orderID: data.orderID, shipping })
             });
             if (!res.ok) {
               let msg = `Payment capture failed (${res.status})`;
