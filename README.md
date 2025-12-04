@@ -47,6 +47,50 @@ cp .env.example .env
 npm install
 npm run dev
 ```
+## Run with Docker (All Services)
+
+This repo includes Dockerfiles per service and a `docker-compose.yml` to run everything locally.
+
+### Prerequisites
+- Docker Desktop (or Docker Engine) installed and running
+
+### Start all services
+```zsh
+docker compose build
+docker compose up -d
+```
+
+### Access
+- Frontend: `http://localhost:5173`
+- APIs:
+	- Auth: `http://localhost:4001`
+	- Product: `http://localhost:4002`
+	- Cart: `http://localhost:4003`
+	- Payment: `http://localhost:4004`
+	- Order: `http://localhost:4005`
+	- Inventory: `http://localhost:4006`
+- MongoDB: internal container `mongo` on `mongodb://mongo:27017` (exposed for dev as needed)
+
+### Manage
+```zsh
+docker compose ps
+docker compose logs -f frontend
+docker compose restart
+docker compose down
+```
+
+### Environment Variables
+- Each service has its own `.env`. Compose overrides `MONGODB_URI` to `mongodb://mongo:27017` and sets DB names.
+- If you prefer MongoDB Atlas, remove the `MONGODB_URI`/`MONGODB_DBNAME` overrides in `docker-compose.yml` so services use their `.env`.
+
+### Volumes
+- `mongo-data`: persists MongoDB data
+- `product-uploads`: persists product images (`backend/product-service/uploads`)
+
+### Frontend (Vite)
+- Built in `Dockerfile.frontend` and served via `vite preview` at `5173`.
+- For production, consider nginx to serve `dist/` with caching.
+
 
 Runs on `http://localhost:4002`.
 

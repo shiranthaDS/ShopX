@@ -1,0 +1,9 @@
+# Reusable Node.js service Dockerfile (copy into each service)
+FROM node:20-alpine
+WORKDIR /app
+ENV NODE_ENV=production
+COPY package.json package-lock.json ./
+RUN npm ci --only=production
+COPY src ./src
+EXPOSE 3000
+CMD ["node", "src/app.js"]

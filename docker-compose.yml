@@ -1,0 +1,149 @@
+version: "3.9"
+services:
+  mongo:
+    image: mongo:6
+    container_name: shopx-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    restart: unless-stopped
+
+  auth-service:
+    build:
+      context: ./backend/auth-service
+      dockerfile: Dockerfile
+    container_name: shopx-auth
+    env_file:
+      - ./backend/auth-service/.env
+    environment:
+      - MONGODB_URI=mongodb+srv://shiranthadw:admin@shopx.pfe2m4h.mongodb.net/
+      - MONGODB_DBNAME=auth
+      - CLIENT_ORIGIN=http://localhost:5173
+    ports:
+      - "4001:4001"
+    depends_on:
+      - mongo
+    restart: unless-stopped
+
+  product-service:
+    build:
+      context: ./backend/product-service
+      dockerfile: Dockerfile
+    container_name: shopx-product
+    env_file:
+      - ./backend/product-service/.env
+    environment:
+      - MONGODB_URI=mongodb+srv://shiranthadw:admin@shopx.pfe2m4h.mongodb.net/
+      - MONGODB_DBNAME=product
+      - CLIENT_ORIGIN=http://localhost:5173
+      - PUBLIC_BASE_URL=http://localhost:4002
+    volumes:
+      - product-uploads:/app/uploads
+    ports:
+      - "4002:4002"
+    depends_on:
+      - mongo
+    restart: unless-stopped
+
+  cart-service:
+    build:
+      context: ./backend/cart-service
+      dockerfile: Dockerfile
+    container_name: shopx-cart
+    env_file:
+      - ./backend/cart-service/.env
+    environment:
+      - MONGODB_URI=mongodb+srv://shiranthadw:admin@shopx.pfe2m4h.mongodb.net/
+      - MONGODB_DBNAME=cart
+      - CLIENT_ORIGIN=http://localhost:5173
+    ports:
+      - "4003:4003"
+    depends_on:
+      - mongo
+    restart: unless-stopped
+
+  payment-service:
+    build:
+      context: ./backend/payment-service
+      dockerfile: Dockerfile
+    container_name: shopx-payment
+    env_file:
+      - ./backend/payment-service/.env
+    environment:
+      - ORDER_API_BASE=http://order-service:4005
+      - INVENTORY_API_BASE=http://inventory-service:4006
+      - CART_API_BASE=http://cart-service:4003
+      - PRODUCT_API_BASE=http://product-service:4002
+      - CLIENT_ORIGIN=http://localhost:5173
+    ports:
+      - "4004:4004"
+    depends_on:
+      - order-service
+      - inventory-service
+      - cart-service
+      - product-service
+    restart: unless-stopped
+
+  order-service:
+    build:
+      context: ./backend/order-service
+      dockerfile: Dockerfile
+    container_name: shopx-order
+    env_file:
+      - ./backend/order-service/.env
+    environment:
+      - MONGODB_URI=mongodb+srv://shiranthadw:admin@shopx.pfe2m4h.mongodb.net/
+      - MONGODB_DBNAME=order
+      - CLIENT_ORIGIN=http://localhost:5173
+    ports:
+      - "4005:4005"
+    depends_on:
+      - mongo
+    restart: unless-stopped
+
+  inventory-service:
+    build:
+      context: ./backend/inventory-service
+      dockerfile: Dockerfile
+    container_name: shopx-inventory
+    env_file:
+      - ./backend/inventory-service/.env
+    environment:
+      - MONGODB_URI=mongodb+srv://shiranthadw:admin@shopx.pfe2m4h.mongodb.net/
+      - MONGODB_DBNAME=inventory
+      - PRODUCT_API_BASE=http://product-service:4002
+      - CLIENT_ORIGIN=http://localhost:5173
+    ports:
+      - "4006:4006"
+    depends_on:
+      - mongo
+      - product-service
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: shopx-frontend
+    environment:
+      - VITE_PRODUCT_API_BASE=http://localhost:4002
+      - VITE_CART_API_BASE=http://localhost:4003
+      - VITE_PAYMENT_API_BASE=http://localhost:4004
+      - VITE_ORDER_API_BASE=http://localhost:4005
+      - VITE_INVENTORY_API_BASE=http://localhost:4006
+      - VITE_AUTH_API_BASE=http://localhost:4001
+    ports:
+      - "5173:80"
+    depends_on:
+      - product-service
+      - cart-service
+      - payment-service
+      - order-service
+      - inventory-service
+      - auth-service
+    restart: unless-stopped
+
+volumes:
+  mongo-data:
+  product-uploads:

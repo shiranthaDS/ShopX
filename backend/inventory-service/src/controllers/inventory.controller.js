@@ -1,5 +1,4 @@
 import InventoryItem from '../models/InventoryItem.js';
-import fetch from 'node-fetch';
 
 const PRODUCT_API_BASE = process.env.PRODUCT_API_BASE || 'http://localhost:4002';
 
