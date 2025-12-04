@@ -27,3 +27,13 @@
   will-change: transform, opacity;
   box-shadow: 0 8px 24px rgba(0,0,0,.2);
 }
+
+/* Utility: break out of centered container to full viewport width */
+.full-bleed {
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  width: 100vw;
+}

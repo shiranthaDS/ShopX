@@ -19,7 +19,7 @@ export default function Login() {
     setLoading(true);
     try {
       await loginFn(form.email, form.password);
-      navigate('/');
+      navigate('/home');
     } catch (err) {
       setError(err.message);
     } finally {
