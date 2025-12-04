@@ -1,0 +1,49 @@
+name: Trigger auto deployment for product-service
+
+# When this action will be executed
+on:
+  # Automatically trigger it when detected changes in repo
+  push:
+    branches: 
+      [ main ]
+    paths:
+    - '**'
+    - '.github/workflows/product-service-AutoDeployTrigger-eda3b5e2-6208-4191-9ebd-52f4f0c2fae3.yml'
+
+  # Allow manual trigger 
+  workflow_dispatch:      
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions: 
+      id-token: write #This is required for requesting the OIDC JWT Token
+      contents: read #Required when GH token is used to authenticate with private repo
+
+    steps:
+      - name: Checkout to the branch
+        uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.PRODUCTSERVICE_AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.PRODUCTSERVICE_AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.PRODUCTSERVICE_AZURE_SUBSCRIPTION_ID }}
+
+      - name: Build and push container image to registry
+        uses: azure/container-apps-deploy-action@v2
+        with:
+          appSourcePath: ${{ github.workspace }}/backend/product-service
+          _dockerfilePathKey_: _dockerfilePath_
+          _targetLabelKey_: _targetLabel_
+          registryUrl: shopx.azurecr.io
+          registryUsername: ${{ secrets.PRODUCTSERVICE_REGISTRY_USERNAME }}
+          registryPassword: ${{ secrets.PRODUCTSERVICE_REGISTRY_PASSWORD }}
+          containerAppName: product-service
+          resourceGroup: shopx-u
+          imageToBuild: shopx.azurecr.io/product-service:${{ github.sha }}
+          _buildArgumentsKey_: |
+            _buildArgumentsValues_
+
+
