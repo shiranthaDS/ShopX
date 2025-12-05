@@ -1,5 +1,6 @@
-// Use dedicated auth base; fall back to localhost only during dev
-const AUTH_API_BASE = import.meta.env.VITE_AUTH_API_BASE || (import.meta.env.DEV ? 'http://localhost:4001' : '');
+// Directly use the EXTERNAL ACA FQDN for auth-service (no "internal" in domain)
+// This bypasses any environment variable to avoid misconfiguration in deployments.
+const AUTH_API_BASE = 'https://auth-service.ambitiousbush-23a76182.uaenorth.azurecontainerapps.io';
 
 export const api = {
   async login({ email, password }) {
