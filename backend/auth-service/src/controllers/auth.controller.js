@@ -34,8 +34,7 @@ export const login = async (req, res) => {
     if (!ok) return res.status(401).json({ message: 'Invalid credentials' });
     const token = signToken({ sub: user._id.toString(), role: user.role });
     res.cookie(TOKEN_COOKIE, token, cookieOptions);
-    // Also return token for clients that need Authorization header across subdomains
-    return res.json({ user: user.toSafeObject(), token });
+    return res.json({ user: user.toSafeObject() });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'Server error' });

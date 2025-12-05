@@ -13,10 +13,6 @@ export const api = {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data?.message || 'Login failed');
-    // Persist token for Authorization header usage on admin calls
-    if (data?.token) {
-      try { localStorage.setItem('shopx_token', data.token); } catch {}
-    }
     return data;
   },
   async register({ name, email, password }) {
@@ -47,6 +43,5 @@ export const api = {
       credentials: 'include',
     });
     if (!res.ok) throw new Error('Logout failed');
-    try { localStorage.removeItem('shopx_token'); } catch {}
   },
 };
