@@ -12,6 +12,18 @@ const clientOrigin = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
 
 // Allow images to be embedded cross-origin from the frontend
 app.use(helmet({
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin || origin === clientOrigin) return callback(null, true);
+      return callback(new Error('Not allowed by CORS'));
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
+app.options('*', cors({ origin: clientOrigin, credentials: true }));
   crossOriginResourcePolicy: { policy: 'cross-origin' },
   crossOriginEmbedderPolicy: false,
 }));
