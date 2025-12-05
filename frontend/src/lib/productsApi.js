@@ -1,4 +1,5 @@
-const PRODUCT_API_BASE = import.meta.env.VITE_PRODUCT_API_BASE || 'http://localhost:4002';
+// Use external ACA FQDN directly to avoid env mismatch
+const PRODUCT_API_BASE = 'https://product-service.ambitiousbush-23a76182.uaenorth.azurecontainerapps.io';
 
 const fetchJson = async (url, options = {}) => {
   const res = await fetch(url, { credentials: 'include', ...options });
