@@ -1,8 +1,20 @@
 // Use external ACA FQDN directly to avoid env mismatch
 const PRODUCT_API_BASE = 'https://product-service.ambitiousbush-23a76182.uaenorth.azurecontainerapps.io';
 
+const getAuthHeader = () => {
+  try {
+    const token = localStorage.getItem('shopx_token');
+    if (token) return { Authorization: `Bearer ${token}` };
+  } catch {}
+  return {};
+};
+
 const fetchJson = async (url, options = {}) => {
-  const res = await fetch(url, { credentials: 'include', ...options });
+  const res = await fetch(url, {
+    credentials: 'include',
+    headers: { ...(options.headers || {}), ...getAuthHeader() },
+    ...options,
+  });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.message || 'Request failed');
   return data;
