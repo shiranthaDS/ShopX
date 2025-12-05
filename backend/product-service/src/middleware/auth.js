@@ -2,10 +2,6 @@ import { TOKEN_COOKIE, verifyToken } from '../utils/jwt.js';
 
 export const requireAdmin = async (req, res, next) => {
   try {
-    if (process.env.DISABLE_ADMIN_AUTH === 'true') {
-      req.user = { role: 'admin' };
-      return next();
-    }
     let token = req.cookies?.[TOKEN_COOKIE];
     // Fallback to Authorization: Bearer <token>
     if (!token) {
