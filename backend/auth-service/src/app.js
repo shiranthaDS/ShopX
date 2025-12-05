@@ -16,6 +16,23 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: clientOrigin,
+const clientOrigin = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow same-origin requests or the configured origin
+      if (!origin || origin === clientOrigin) {
+        return callback(null, true);
+      }
+      callback(new Error('Not allowed by CORS'));
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
+// Handle preflight for all routes
+app.options('*', cors({ origin: clientOrigin, credentials: true }));
     credentials: true,
   })
 );
