@@ -28,6 +28,9 @@ app.use(
 // Static files for uploaded images
 app.use('/uploads', express.static(uploadsPath));
 
+// Friendly root response for external ingress
+app.get('/', (_req, res) => res.json({ service: 'product', endpoints: ['/health', '/api/products'] }));
+
 app.get('/health', (_req, res) => res.json({ status: 'ok', service: 'product' }));
 app.use('/api/products', productRoutes);
 
