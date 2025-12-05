@@ -24,6 +24,10 @@ export const cookieOptions = {
   sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
   maxAge: 7 * 24 * 60 * 60 * 1000,
   path: '/',
+  // Optional: share cookie across ACA subdomains (auth-service, product-service, etc.)
+  // Set JWT_COOKIE_DOMAIN to the ACA environment base domain (e.g., ambitiousbush-23a76182.uaenorth.azurecontainerapps.io)
+  // This enables the browser to send the cookie to other services under the same base domain.
+  domain: process.env.JWT_COOKIE_DOMAIN || undefined,
 };
 
 export const TOKEN_COOKIE = 'shopx_token';
