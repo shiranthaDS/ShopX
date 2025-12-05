@@ -20,6 +20,11 @@ app.use(
   })
 );
 
+// Friendly root response for external ingress
+app.get('/', (_req, res) => {
+  res.json({ service: 'auth', endpoints: ['/health', '/api/auth'] });
+});
+
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', service: 'auth' });
 });
