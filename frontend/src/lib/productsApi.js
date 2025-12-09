@@ -1,5 +1,4 @@
-// Hardcode external ACA FQDN for product-service to avoid env dependency
-const PRODUCT_API_BASE = 'https://product-service.ambitiousbush-23a76182.uaenorth.azurecontainerapps.io';
+const PRODUCT_API_BASE = import.meta.env.VITE_PRODUCT_API_BASE || 'http://localhost:4002';
 
 const fetchJson = async (url, options = {}) => {
   const res = await fetch(url, { credentials: 'include', ...options });

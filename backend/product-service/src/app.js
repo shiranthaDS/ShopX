@@ -8,8 +8,7 @@ import productRoutes from './routes/product.routes.js';
 import { uploadsPath } from './middleware/upload.js';
 
 const app = express();
-// Hardcode frontend origin to avoid env dependency
-const clientOrigin = 'https://shop-x-henna.vercel.app';
+const clientOrigin = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
 
 // Allow images to be embedded cross-origin from the frontend
 app.use(helmet({
