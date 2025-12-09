@@ -9,6 +9,19 @@ const router = Router();
 router.get('/', optionalAuth, listProducts);
 router.get('/meta/categories', optionalAuth, listCategories);
 router.get('/meta/archived', requireAdmin, listArchivedProducts);
+// Debug: inspect decoded token from cookie
+router.get('/meta/token', (req, res) => {
+  try {
+    const token = req.cookies?.shopx_token;
+    if (!token) return res.status(401).json({ message: 'No token' });
+    // Inline verify to avoid import cycles
+    const { verifyToken } = await import('../utils/jwt.js');
+    const decoded = verifyToken(token);
+    return res.json({ decoded });
+  } catch (e) {
+    return res.status(401).json({ message: 'Unauthorized', error: e?.message });
+  }
+});
 router.get('/:id', optionalAuth, getProduct);
 
 // Admin protected
