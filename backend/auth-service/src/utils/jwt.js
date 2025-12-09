@@ -22,6 +22,9 @@ export const cookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production',
   sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+  // Share cookie across ACA subdomains (auth-service, product-service, etc.)
+  // IMPORTANT: Use the parent domain so cookies are sent to all service subdomains.
+  domain: process.env.NODE_ENV === 'production' ? '.ambitiousbush-23a76182.uaenorth.azurecontainerapps.io' : undefined,
   maxAge: 7 * 24 * 60 * 60 * 1000,
   path: '/',
 };
