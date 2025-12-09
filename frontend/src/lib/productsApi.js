@@ -1,4 +1,4 @@
-// Use external ACA FQDN directly to avoid env mismatch
+// Hardcode external ACA FQDN for product-service to avoid env dependency
 const PRODUCT_API_BASE = 'https://product-service.ambitiousbush-23a76182.uaenorth.azurecontainerapps.io';
 
 const fetchJson = async (url, options = {}) => {

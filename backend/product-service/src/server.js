@@ -4,7 +4,8 @@ import http from 'http';
 import app from './app.js';
 import { connectDB } from './utils/db.js';
 
-const PORT = process.env.PORT || 4002;
+// Hardcode port to avoid env dependency
+const PORT = 4002;
 
 async function start() {
   try {
