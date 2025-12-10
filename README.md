@@ -1,121 +1,217 @@
-# ShopX
+# ShopX 🛍️
 
-Modern E-Commerce Platform (MERN) with a microservices architecture.
+[![Azure Container Apps](https://img.shields.io/badge/Azure-Container%20Apps-0078D4?logo=microsoft-azure)](https://azure.microsoft.com/en-us/services/container-apps/)
+[![Vercel](https://img.shields.io/badge/Vercel-Deployed-000000?logo=vercel)](https://vercel.com)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Database-47A248?logo=mongodb)](https://www.mongodb.com/)
+[![React](https://img.shields.io/badge/React-Frontend-61DAFB?logo=react)](https://reactjs.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-Backend-339933?logo=node.js)](https://nodejs.org/)
 
-This repo currently includes the Authentication Service and a single React frontend (shared for the whole system). Additional services (Product, Inventory, Cart, Order, Payment, Notification) can be added under `backend/` following the same pattern.
+> **Modern full-stack e-commerce platform** built with microservices architecture, featuring seamless shopping experience from browsing to checkout with PayPal integration.
 
-## Structure
-- `backend/auth-service` — Express + MongoDB (JWT via httpOnly cookie)
-- `frontend` — Vite + React + Tailwind (Login, Register)
- - `backend/product-service` — Product CRUD, filtering, image upload, categories endpoint
+**URL:** [https://shop-x-henna.vercel.app](https://shop-x-henna.vercel.app)
 
-## Prerequisites
-- Node.js 18+
-- NPM 9+
+---
+## 🌟 Key Features
 
-## Quick Start
+### Technical Highlights
+- ⚡  **Microservices Architecture** - Independent, scalable services
+- 🌐 **Cloud-Native Deployment** - Azure Container Apps + Vercel
+- 🐳 **Containerized Services** - Docker containers for all microservices
+- 🔄 **Auto-Scaling** - Azure Container Apps auto-scaling capabilities
+- 🔒 **JWT Authentication** - Secure token-based auth with httpOnly cookies
+- 💳 **PayPal Integration** - Secure payments with PayPal sandbox/live mode
+- 🔄 **CI/CD:** GitHub Actions CI/CD pipelines via Azure Container Apps & Vercel 
 
-1) Auth Service (backend)
+---
+## 🏗️ Architecture
 
-```zsh
+### Microservices Overview
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     Frontend (Vercel)                        │
+│              React + Vite + Tailwind CSS                     │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+         ┌───────────┴───────────┐
+         │   Azure Container Apps │
+         │   Environment          │
+         └───────────┬───────────┘
+                     │
+    ┌────────────────┼────────────────┐
+    │                │                │
+┌───▼────┐    ┌─────▼─────┐   ┌─────▼──────┐
+│ Auth   │    │  Product  │   │   Cart     │
+│Service │    │  Service  │   │  Service   │
+│:4001   │    │   :4002   │   │   :4003    │
+└───┬────┘    └─────┬─────┘   └─────┬──────┘
+    │               │               │
+┌───▼────┐    ┌─────▼─────┐   ┌─────▼──────┐
+│Payment │    │  Order    │   │ Inventory  │
+│Service │    │  Service  │   │  Service   │
+│:4004   │    │   :4005   │   │   :4006    │
+└───┬────┘    └─────┬─────┘   └─────┬──────┘
+    │               │               │
+    └───────────────┴───────────────┘
+                    │
+            ┌───────▼────────┐
+            │  MongoDB Atlas │
+            │   (Cloud DB)   │
+            └────────────────┘
+```
+
+---
+
+### Service Responsibilities
+
+| Service | Port | Description | Database |
+|---------|------|-------------|----------|
+| **Auth Service** | 4001 | User authentication, JWT token management | `auth` |
+| **Product Service** | 4002 | Product catalog, categories, image uploads | `product` |
+| **Cart Service** | 4003 | Shopping cart operations, checkout summary | `cart` |
+| **Payment Service** | 4004 | PayPal integration, order capture | N/A |
+| **Order Service** | 4005 | Order history and management | `orders` |
+| **Inventory Service** | 4006 | Stock levels, inventory tracking | `inventory` |
+
+---
+
+## 🛠️ Technology Stack
+
+### Frontend
+- **Framework:** React 18 with Vite
+- **Styling:** Tailwind CSS + Custom Components
+- **Routing:** React Router v6
+- **Build Tool:** Vite 
+
+### Backend
+- **Runtime:** Node.js 20 (Alpine Linux)
+- **Framework:** Express.js
+- **Database:** MongoDB Atlas (Cloud)
+- **Authentication:** JWT (jsonwebtoken)
+- **Payment:** PayPal REST SDK (@paypal/checkout-server-sdk)
+
+### DevOps & Cloud
+- **Containerization:** Docker + Docker Compose
+- **Container Registry:** Azure Container Registry (ACR)
+- **Backend Hosting:** Azure Container Apps
+- **Frontend Hosting:** Vercel
+- **CI/CD:** GitHub Actions automate CI/CD workflows directly 
+- **Database:** MongoDB Atlas (Managed)
+- **DNS:** Azure Container Apps default domains + Vercel domains
+
+
+---
+
+## 🚀 Deployment Architecture
+
+### Azure Container Apps (Backend)
+```
+shopx-rg (Resource Group)
+├── shopx-eu (Container Apps Environment)
+├── shopx.azurecr.io (Container Registry)
+└── Container Apps:
+    ├── auth-service
+    ├── product-service (min replicas: 1)
+    ├── cart-service
+    ├── payment-service (min replicas: 1)
+    ├── order-service (min replicas: 1)
+    └── inventory-service (min replicas: 1)
+```
+
+**Features:**
+- External ingress enabled on all services
+- CORS configured for Vercel origin
+- Environment variables for service URLs
+- Auto-scaling (0-10 replicas, critical services min 1)
+- Health endpoints for monitoring
+
+
+---
+
+## 📋 Prerequisites
+
+- **Node.js** 18+ and npm 9+
+- **Docker Desktop** (for local development)
+- **MongoDB Atlas** account (free tier works)
+- **Azure Account** (for deployment)
+- **Vercel Account** (for frontend deployment)
+- **PayPal Developer** account (for payment integration)
+
+
+---
+
+## 🐳 Docker Deployment
+
+### Build and Push to Azure Container Registry
+
+```bash
+# Login to ACR
+az acr login --name shopx
+
+# Build and push each service
 cd backend/auth-service
-cp .env.example .env
-# .env is already prefilled with your MongoDB URI and defaults
-npm install
-npm run dev
+docker buildx build --platform linux/amd64 -t shopx.azurecr.io/auth-service:latest --push .
+
+cd ../product-service
+docker buildx build --platform linux/amd64 -t shopx.azurecr.io/product-service:latest --push .
+
+# Repeat for all services
 ```
 
-Backend runs on `http://localhost:4001`.
+### Deploy to Azure Container Apps
 
-2) Frontend
+```bash
+# Create resource group
+az group create --name shopx-u --location uaenorth
 
-```zsh
+# Create Container Apps environment
+az containerapp env create --name shopx-eu --resource-group shopx-u --location uaenorth
+
+# Deploy auth service
+az containerapp create \
+  --name auth-service \
+  --resource-group shopx-u \
+  --environment shopx-eu \
+  --image shopx.azurecr.io/auth-service:latest \
+  --target-port 4001 \
+  --ingress external \
+  --registry-server shopx.azurecr.io \
+  --env-vars MONGODB_URI=... JWT_SECRET=... \
+  --min-replicas 0 \
+  --max-replicas 10
+
+# Repeat for all services
+```
+
+### Frontend Deployment (Vercel)
+
+```bash
 cd frontend
-npm install
-npm run dev
+npx vercel deploy --prod
+
+# Alias to custom domain
+npx vercel alias <deployment-url> shop-x-henna.vercel.app
 ```
 
-Frontend runs on `http://localhost:5173`.
+---
 
-The frontend is configured to call the backend at `http://localhost:4001` and uses `credentials: 'include'` so the httpOnly cookie is set properly.
+## 📈 Performance Optimizations
 
-3) Product Service (backend)
+- Vite for fast frontend builds
+- Lazy loading for routes
+- Image optimization in product service
+- MongoDB indexing for fast queries
+- Azure Container Apps auto-scaling
+- Vercel global CDN
+- Efficient state management with Context API
 
-```zsh
-cd backend/product-service
-cp .env.example .env
-npm install
-npm run dev
-```
-## Run with Docker (All Services)
+---
 
-This repo includes Dockerfiles per service and a `docker-compose.yml` to run everything locally.
+## 👨‍💻 Author
 
-### Prerequisites
-- Docker Desktop (or Docker Engine) installed and running
+**Shirantha Dissanayake**
+- GitHub: [@shiranthaDS](https://github.com/shiranthaDS)
+- Email: shiranthadw@gmail.com
+---
 
-### Start all services
-```zsh
-docker compose build
-docker compose up -d
-```
-
-### Access
-- Frontend: `http://localhost:5173`
-- APIs:
-	- Auth: `http://localhost:4001`
-	- Product: `http://localhost:4002`
-	- Cart: `http://localhost:4003`
-	- Payment: `http://localhost:4004`
-	- Order: `http://localhost:4005`
-	- Inventory: `http://localhost:4006`
-- MongoDB: internal container `mongo` on `mongodb://mongo:27017` (exposed for dev as needed)
-
-### Manage
-```zsh
-docker compose ps
-docker compose logs -f frontend
-docker compose restart
-docker compose down
-```
-
-### Environment Variables
-- Each service has its own `.env`. Compose overrides `MONGODB_URI` to `mongodb://mongo:27017` and sets DB names.
-- If you prefer MongoDB Atlas, remove the `MONGODB_URI`/`MONGODB_DBNAME` overrides in `docker-compose.yml` so services use their `.env`.
-
-### Volumes
-- `mongo-data`: persists MongoDB data
-- `product-uploads`: persists product images (`backend/product-service/uploads`)
-
-### Frontend (Vite)
-- Built in `Dockerfile.frontend` and served via `vite preview` at `5173`.
-- For production, consider nginx to serve `dist/` with caching.
-
-
-Runs on `http://localhost:4002`.
-
-## API (Auth)
-## API (Products)
-- `GET /api/products` list with query params: `page, limit, category, search, minPrice, maxPrice`
-- `GET /api/products/:id` single product
-- `GET /api/products/meta/categories` distinct categories
-- `POST /api/products` (admin) multipart form: `title, description, price, categories, images[]`
-- `PUT /api/products/:id` (admin) partial update + optional new `images[]`
-- `DELETE /api/products/:id` (admin) soft delete (sets `active=false`)
-
-Image uploads served from `/uploads/*` in product service.
-- `POST /api/auth/register` { name, email, password }
-- `POST /api/auth/login` { email, password }
-- `GET /api/auth/me` (requires cookie)
-- `POST /api/auth/logout` (requires cookie)
-
-Responses include a sanitized `user` object. JWT is set/cleared via `Set-Cookie` on the `shopx_token` cookie.
-
-## Notes
-- CORS is configured to allow `http://localhost:5173` with `credentials`.
-- Each service should use its own database name (this one uses `auth`).
- - Product service uses `product` database name.
-- For production, set `NODE_ENV=production` and ensure HTTPS so cookies are sent with `secure`.
-
-## Next Services
-- Product Catalog, Inventory, Cart, Order, Payment, Notification — create a folder per service under `backend/` and reuse the patterns here (Express app, `.env`, routes, models).
+**⭐ If you find this project useful, please consider giving it a star!**
