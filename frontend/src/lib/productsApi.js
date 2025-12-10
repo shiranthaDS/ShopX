@@ -1,8 +1,17 @@
 // Hardcoded ACA product-service external URL
 const PRODUCT_API_BASE = 'https://product-service.ambitiousbush-23a76182.uaenorth.azurecontainerapps.io';
 
+// Import token helper
+import { getAuthToken } from './api.js';
+
+const getAuthHeaders = () => {
+  const token = getAuthToken();
+  return token ? { 'Authorization': `Bearer ${token}` } : {};
+};
+
 const fetchJson = async (url, options = {}) => {
-  const res = await fetch(url, { credentials: 'include', ...options });
+  const headers = { ...getAuthHeaders(), ...options.headers };
+  const res = await fetch(url, { ...options, headers });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.message || 'Request failed');
   return data;

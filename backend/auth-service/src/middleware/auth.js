@@ -3,7 +3,12 @@ import { User } from '../models/User.js';
 
 export const requireAuth = async (req, res, next) => {
   try {
-    const token = req.cookies?.[TOKEN_COOKIE];
+    // Check Authorization header first, then fall back to cookie
+    let token = req.cookies?.[TOKEN_COOKIE];
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.substring(7);
+    }
     if (!token) return res.status(401).json({ message: 'Unauthorized' });
     const decoded = verifyToken(token);
     const user = await User.findById(decoded.sub);

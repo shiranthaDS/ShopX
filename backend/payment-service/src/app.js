@@ -18,6 +18,7 @@ app.use(cors({ origin: CLIENT_ORIGIN, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 
+app.get('/', (_req, res) => res.json({ service: 'payment', endpoints: ['/api/health', '/api/paypal'] }));
 app.get('/api/health', (_req, res) => res.json({ ok: true, service: 'payment-service' }));
 
 app.use('/api/paypal', paypalRoutes);

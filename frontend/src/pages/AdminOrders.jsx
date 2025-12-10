@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-const ORDER_API_BASE = import.meta.env.VITE_ORDER_API_BASE || 'http://localhost:4005';
+const ORDER_API_BASE = 'https://order-service.ambitiousbush-23a76182.uaenorth.azurecontainerapps.io';
 
 export default function AdminOrders() {
   const [data, setData] = useState({ items: [], total: 0, page: 1, limit: 20 });

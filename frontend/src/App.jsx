@@ -13,6 +13,7 @@ import AdminInventory from './pages/AdminInventory.jsx';
 import Home from './pages/Home.jsx';
 import { useAuth } from './context/AuthContext.jsx';
 import { useCart } from './context/CartContext.jsx';
+import shopxLogo from './components/shopx.jpeg';
 
 export default function App() {
   const { user, logout } = useAuth();
@@ -23,9 +24,7 @@ export default function App() {
       <header className="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-gray-900/60 border-b border-gray-100 dark:border-gray-800">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
-            <span className="inline-flex h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-600 to-rose-600 text-white items-center justify-center shadow-md">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 5.5a1 1 0 112 0V11a1 1 0 01-1 1h-3.5a1 1 0 110-2H13V7.5z"/></svg>
-            </span>
+            <img src={shopxLogo} alt="ShopX Logo" className="h-12 w-auto object-contain" />
             <span className="text-xl font-semibold tracking-tight">ShopX</span>
           </Link>
           <nav className="flex gap-5 text-sm items-center">

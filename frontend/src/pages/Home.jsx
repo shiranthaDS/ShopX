@@ -3,9 +3,9 @@ import { productsApi } from '../lib/productsApi.js';
 import ProductCard from '../components/ProductCard.jsx';
 
 const HERO_IMAGES = [
-  'https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?q=80&w=1400&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1491553895911-0055eca6402d?q=80&w=1400&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1515165562835-c3b8c6ae5ee1?q=80&w=1400&auto=format&fit=crop',
+  'https://rog.asus.com/media/1736896995425.jpg',
+  'https://www.nanotek.lk/storage/home-slider/KGXvaNZyQPqM0dS9NqEokLjTlPzJLgAEaRDRQm8P.webp',
+  'https://dlcdnwebimgs.asus.com/gain/52CE4B92-E837-4EE1-9245-4BA97955E3F8/fwebp/fwebp',
 ];
 
 export default function Home() {

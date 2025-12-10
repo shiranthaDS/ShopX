@@ -1,4 +1,5 @@
-const CART_API_BASE = import.meta.env.VITE_CART_API_BASE || 'http://localhost:4003';
+// Hardcoded ACA cart-service external URL
+const CART_API_BASE = 'https://cart-service.ambitiousbush-23a76182.uaenorth.azurecontainerapps.io';
 
 const fetchJson = async (url, options = {}) => {
   const res = await fetch(url, { credentials: 'include', ...options });

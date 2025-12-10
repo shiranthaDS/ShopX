@@ -21,6 +21,7 @@ mongoose.connect(process.env.MONGODB_URI, { dbName: process.env.MONGODB_DBNAME |
   .then(() => console.log('inventory-service connected to MongoDB'))
   .catch(err => console.error('Mongo connection error', err));
 
+app.get('/', (_req, res) => res.json({ service: 'inventory', endpoints: ['/api/health', '/api/inventory'] }));
 app.get('/api/health', (_req, res) => res.json({ ok: true, service: 'inventory-service' }));
 app.use('/api/inventory', invRoutes);
 

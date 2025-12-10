@@ -20,10 +20,12 @@ export const verifyToken = (token) => {
 
 export const cookieOptions = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+  secure: true, // Always secure for production
+  sameSite: 'none', // Always none for cross-site
   maxAge: 7 * 24 * 60 * 60 * 1000,
   path: '/',
+  // Hardcode shared domain for all ACA services
+  domain: '.ambitiousbush-23a76182.uaenorth.azurecontainerapps.io',
 };
 
 export const TOKEN_COOKIE = 'shopx_token';

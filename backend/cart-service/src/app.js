@@ -20,6 +20,7 @@ app.use(
   })
 );
 
+app.get('/', (_req, res) => res.json({ service: 'cart', endpoints: ['/health', '/api/cart'] }));
 app.get('/health', (_req, res) => res.json({ status: 'ok', service: 'cart' }));
 app.use('/api/cart', requireUser, cartRoutes);
 

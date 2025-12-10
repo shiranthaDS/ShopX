@@ -3,6 +3,25 @@ import { publicImageUrl, uploadsPath } from '../middleware/upload.js';
 import fs from 'fs';
 import path from 'path';
 
+// Helper to fix old internal URLs in product images
+const fixImageUrls = (product) => {
+  if (!product || !product.images) return product;
+  const publicBase = process.env.PUBLIC_BASE_URL || '';
+  const fixed = { ...product.toObject ? product.toObject() : product };
+  fixed.images = fixed.images.map(url => {
+    if (!url) return url;
+    // Replace .internal. with external domain
+    if (url.includes('.internal.')) {
+      const pathPart = url.split('/uploads/')[1];
+      if (pathPart && publicBase) {
+        return `${publicBase}/uploads/${pathPart}`;
+      }
+    }
+    return url;
+  });
+  return fixed;
+};
+
 export const createProduct = async (req, res) => {
   try {
     const files = req.files || [];
@@ -60,7 +79,8 @@ export const listProducts = async (req, res) => {
       query.sort({ createdAt: -1 }).skip(skip).limit(parseInt(limit, 10)),
       Product.countDocuments(filter),
     ]);
-    res.json({ items, total, page: parseInt(page, 10), pages: Math.ceil(total / parseInt(limit, 10)) });
+    const fixedItems = items.map(fixImageUrls);
+    res.json({ items: fixedItems, total, page: parseInt(page, 10), pages: Math.ceil(total / parseInt(limit, 10)) });
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
   }
@@ -80,7 +100,8 @@ export const getProduct = async (req, res) => {
   try {
     const product = await Product.findById(id);
     if (!product || !product.active) return res.status(404).json({ message: 'Not found' });
-    res.json({ product });
+    const fixed = fixImageUrls(product);
+    res.json({ product: fixed });
   } catch (err) {
     res.status(404).json({ message: 'Not found' });
   }

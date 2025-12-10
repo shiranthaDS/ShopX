@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cartApi } from '../lib/cartApi.js';
 
-const PAYMENT_API_BASE = import.meta.env.VITE_PAYMENT_API_BASE || 'http://localhost:4004';
+const PAYMENT_API_BASE = 'https://payment-service.ambitiousbush-23a76182.uaenorth.azurecontainerapps.io';
 
 function loadPaypalScript(clientId, currency = 'USD') {
   return new Promise((resolve, reject) => {

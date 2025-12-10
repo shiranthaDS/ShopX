@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-const INVENTORY_API_BASE = import.meta.env.VITE_INVENTORY_API_BASE || 'http://localhost:4006';
+const INVENTORY_API_BASE = 'https://inventory-service.ambitiousbush-23a76182.uaenorth.azurecontainerapps.io';
 
 export default function AdminInventory() {
   const [items, setItems] = useState([]);
